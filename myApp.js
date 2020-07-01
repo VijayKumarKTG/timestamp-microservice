@@ -1,8 +1,8 @@
-var express = require("express");
+var express = require('express');
 var app = express();
-var bodyParser = require("body-parser");
+var bodyParser = require('body-parser');
 
-app.use(express.static(__dirname + "/public"));
+app.use(express.static(__dirname + '/public'));
 app.use((req, res, next) => {
   console.log(`${req.method} ${req.path} - ${req.ip}`);
   next();
@@ -10,24 +10,24 @@ app.use((req, res, next) => {
 
 app.use(bodyParser.urlencoded({ extended: false }));
 
-app.get("/", (req, res) => {
-  let absolutePath = __dirname + "/views/index.html";
+app.get('/', (req, res) => {
+  let absolutePath = __dirname + '/views/index.html';
   res.sendFile(absolutePath);
 });
 
-app.get("/api/timestamp/:date_string?", (req, res) => {
+app.get('/api/timestamp/', (req, res) => {
+  let date = new Date();
+  res.json({ unix: parseInt(date.getTime()), utc: date.toUTCString() });
+});
+
+app.get('/api/timestamp/:date_string?', (req, res) => {
   let dateString = req.params.date_string;
   let date;
-  console.log(dateString);
-  if (dateString === undefined) {
-    date = new Date();
-  } else {
-    if(dateString.split('-').length === 1){
-      dateString = parseInt(dateString);
-    }
-    date = new Date(dateString);
+  if (dateString.split('-').length === 1) {
+    dateString = parseInt(dateString);
   }
-  if (date.toUTCString() !== "Invalid Date") {
+  date = new Date(dateString);
+  if (date.toUTCString() !== 'Invalid Date') {
     res.json({ unix: parseInt(date.getTime()), utc: date.toUTCString() });
   } else {
     res.json({ error: date.toUTCString() });
